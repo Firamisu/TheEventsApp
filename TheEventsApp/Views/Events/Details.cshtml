@@ -1,0 +1,46 @@
+﻿@model TheEventsApp.Models.Event
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container mt-5">
+    <!-- Page Title -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 text-primary">@Model.Name</h1>
+        <p class="text-muted">@Model.Description</p>
+    </div>
+
+    <!-- Event Details -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h4 class="mb-0">Event Details</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4 text-end text-secondary">Start Date:</dt>
+                <dd class="col-sm-8">@Model.StartDate.ToString("MMMM dd, yyyy")</dd>
+
+                <dt class="col-sm-4 text-end text-secondary">End Date:</dt>
+                <dd class="col-sm-8">@Model.EndDate.ToString("MMMM dd, yyyy")</dd>
+
+                <dt class="col-sm-4 text-end text-secondary">Max Participants:</dt>
+                <dd class="col-sm-8">@Model.MaxParticipants</dd>
+
+                <dt class="col-sm-4 text-end text-secondary">Description:</dt>
+                <dd class="col-sm-8">@Model.Description</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <div class="d-flex justify-content-center gap-3">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Edit Event</a>
+                }
+                <a asp-action="Index" class="btn btn-secondary">Back to Events</a>
+            </div>
+        </div>
+    </div>
+
+ 
+</div>

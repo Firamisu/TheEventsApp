@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="~/TheEventsApp.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <header class="d-flex justify-content-center">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border rounded box-shadow mb-3 mt-3" style="width: 88vw;">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TheEventsApp</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">The<span class="text-primary">Events</span>App</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -22,8 +22,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                    
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" href="events">Events</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -37,9 +38,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted text-center">
         <div class="container">
-            &copy; 2025 - TheEventsApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - TheEventsApp
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

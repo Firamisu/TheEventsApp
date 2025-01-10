@@ -21,8 +21,6 @@ public class Program {
 
       
 
- 
-
         builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
         {
             options.SignIn.RequireConfirmedAccount = false;
@@ -40,7 +38,6 @@ public class Program {
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
@@ -51,6 +48,7 @@ public class Program {
 
         app.UseAuthorization();
         app.MapRazorPages();
+        app.UseStatusCodePagesWithRedirects("/StatusCode?code={0}");
 
 
 

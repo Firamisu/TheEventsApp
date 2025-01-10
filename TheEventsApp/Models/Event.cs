@@ -1,4 +1,6 @@
-﻿namespace TheEventsApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TheEventsApp.Models
 {
     public class Event
     {
@@ -8,6 +10,8 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int MaxParticipants { get; set; }
+        [Required]
+        public ApplicationUser Organizer { get; set; }
 
         public ICollection<ApplicationUser> Participants { get; set; }
 

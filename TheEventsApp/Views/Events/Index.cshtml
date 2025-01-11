@@ -5,12 +5,12 @@
 }
 
 <div class="container mt-5">
-  
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-5">Events</h1>
         @if (User.Identity.IsAuthenticated)
         {
-            <a asp-action="Create" class="btn btn-primary btn-lg">Create New Event</a>
+            <a asp-action="Create" class="btn btn-primary btn-sm">Create New Event</a>
         }
     </div>
 
@@ -20,7 +20,7 @@
         <div class="alert alert-warning text-center" role="alert">
             <h4 class="alert-heading">No Events Found</h4>
             <p>There are currently no events available.</p>
-         
+
             @if (User.Identity.IsAuthenticated)
             {
                 <a asp-action="Create" class="btn btn-primary">Create Your First Event</a>
@@ -29,17 +29,17 @@
     }
     else
     {
-       
+
         <div class="row g-4">
             @foreach (var item in Model)
             {
                 <div class="col-md-4">
-                    <div class="card h-100 shadow-sm rounded-lg border-light">
+                    <div class="card h-100 shadow-sm border-light">
                         <div class="card-header bg-gradient-primary text-white">
                             <h5 class="card-title mb-0">@item.Name</h5>
                         </div>
                         <div class="card-body">
-                          
+
                             <p class="card-text">
                                 <strong>Description:</strong>
                                 @if (item.Description.Length > 150)
@@ -57,28 +57,31 @@
                                 <strong>Organizer:</strong>
                                 @item.Organizer.FirstName @item.Organizer.LastName
                             </p>
-                    <p class="card-text">
-                        <strong>Start:</strong> @item.StartDate.ToString("yyyy-MM-dd hh:mm tt")<br />
-                        <strong>End:</strong> @item.EndDate.ToString("yyyy-MM-dd hh:mm tt")
-                    </p>
-                    <p class="card-text">
-                        <strong>Max Participants:</strong> @item.MaxParticipants
-                    </p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white">Details</a>
-                     @if (User.Identity != null && @item.Organizer.UserName == User.Identity.Name)
-                     {
-                        <div>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                            <p class="card-text">
+                                <strong>Start:</strong> @item.StartDate.ToString("yyyy-MM-dd hh:mm tt")<br />
+                                <strong>End:</strong> @item.EndDate.ToString("yyyy-MM-dd hh:mm tt")
+                            </p>
+                            <p class="card-text">
+                                <strong>Max Participants:</strong> @item.MaxParticipants
+                            </p>
                         </div>
-                    }
+                        <div class="card-footer d-flex justify-content-between">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm text-white">Details</a>
+                            @if (User.Identity != null && (@item.Organizer.UserName == User.Identity.Name || User.IsInRole("Admin")))
+                            {
+                                <div>
+                                    @if (User.Identity != null && @item.Organizer.UserName == User.Identity.Name)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                                    }
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
-        }
-    </div>
     }
 </div>
 
@@ -120,7 +123,6 @@
     }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
         }
 </style>

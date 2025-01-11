@@ -308,7 +308,10 @@ namespace TheEventsApp.Controllers
             }
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 
-            if (@event != null && @event.Organizer == user)
+            // user has role admin
+         
+
+            if (@event != null && (@event.Organizer == user || User.IsInRole("Admin")))
             {
                 _context.Events.Remove(@event);
             } else

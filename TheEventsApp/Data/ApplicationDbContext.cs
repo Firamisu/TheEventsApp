@@ -12,14 +12,34 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
 
-    private class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<ApplicationUser>
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
-        {
-            builder.Property(x => x.FirstName).HasMaxLength(255);
-            builder.Property(x => x.LastName).HasMaxLength(255);
-        }
+        base.OnModelCreating(modelBuilder);
+
+    
+
+        modelBuilder.Entity<ApplicationUser>()
+           .Property(x => x.FirstName).HasMaxLength(255);
+        modelBuilder.Entity<ApplicationUser>()
+           .Property(x => x.LastName).HasMaxLength(255);
+
+    
+
+        modelBuilder.Entity<Event>()
+            .HasOne(e => e.Organizer).WithMany(u => u.OrganizedEvents).OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Event>()
+            .HasMany(e => e.Participants).WithMany(u => u.ParticipatedEvents);
+           
+            
+           
     }
+
+
+
+
+
     public DbSet<Event> Events { get; set; }
 
 }

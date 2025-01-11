@@ -24,7 +24,7 @@ namespace TheEventsApp.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Events.ToListAsync());
+            return View(await _context.Events.Include("Organizer").ToListAsync());
         }
 
         // GET: Events/Details/5
@@ -37,6 +37,7 @@ namespace TheEventsApp.Controllers
 
             var @event = await _context.Events
                 .Include(e => e.Participants)
+                .Include(e => e.Organizer)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@event == null)
             {
@@ -51,7 +52,7 @@ namespace TheEventsApp.Controllers
         }
 
         // GET: Events/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -62,6 +63,20 @@ namespace TheEventsApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,StartDate,EndDate,MaxParticipants")] Event @event)
         {
+            
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _context.Users.FindAsync(userId);
+            
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            @event.Organizer = user;
+            ModelState.Remove("Participants");
+            ModelState.Remove("Organizer");
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(@event);
@@ -72,7 +87,7 @@ namespace TheEventsApp.Controllers
         }
 
         // GET: Events/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize()]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,32 +95,57 @@ namespace TheEventsApp.Controllers
                 return NotFound();
             }
 
+            if (User.Identity == null)
+            {
+                return BadRequest();
+            }
+            var loggedUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
             var @event = await _context.Events.FindAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
+
+            if (@event.Organizer != loggedUser)
+            {
+                return BadRequest();
+            }
+
             return View(@event);
         }
 
         // POST: Events/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize()]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartDate,EndDate,MaxParticipants")] Event @event)
         {
-            if (id != @event.Id)
-            {
-                return NotFound();
-            }
-
+   
             ModelState.Remove("Participants");
+            ModelState.Remove("Organizer");
+
+      
+            if (User.Identity == null)
+            {
+                return BadRequest();
+            }
+            var loggedUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            var selectedEvent = await _context.Events.Include(e => e.Organizer).FirstOrDefaultAsync(e => e.Id == id);
+
+            if (selectedEvent == null || selectedEvent.Organizer != loggedUser)
+            {
+                return BadRequest();
+            }
+            _context.Entry(selectedEvent).CurrentValues.SetValues(@event);
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(@event);
+                    _context.Update(selectedEvent);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -216,7 +256,13 @@ namespace TheEventsApp.Controllers
                 .FirstOrDefault(e => e.Id == eventId);
             var participant = _context.Users.FirstOrDefault(u => u.Id == userId);
 
-            if (selectedEvent != null && participant != null)
+            if (User.Identity == null)
+            {
+                return BadRequest();
+            }
+            var loggedUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            if (selectedEvent != null && participant != null && selectedEvent.Organizer == loggedUser)
             {
                 selectedEvent.Participants.Remove(participant);
                 await _context.SaveChangesAsync();
@@ -230,7 +276,7 @@ namespace TheEventsApp.Controllers
 
 
         // GET: Events/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize()]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -251,13 +297,26 @@ namespace TheEventsApp.Controllers
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize()]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var @event = await _context.Events.FindAsync(id);
-            if (@event != null)
+       
+            if (User.Identity == null)
+            {
+                return BadRequest();
+            }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            // user has role admin
+         
+
+            if (@event != null && (@event.Organizer == user || User.IsInRole("Admin")))
             {
                 _context.Events.Remove(@event);
+            } else
+            {
+                return BadRequest();
             }
 
             await _context.SaveChangesAsync();

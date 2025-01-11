@@ -48,6 +48,12 @@
                     }
                 </div>
             </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4 text-secondary fw-bold text-start">Organizer:</div>
+                <div class="col-md-8">@Model.Organizer.FirstName @Model.Organizer.LastName</div>
+            </div>
+
             <div class="row mb-3">
                 <div class="col-md-4 text-secondary fw-bold text-start">Description:</div>
                 <div class="col-md-8">@Model.Description</div>
@@ -55,7 +61,7 @@
         </div>
         <div class="card-footer bg-light text-center py-3">
             <div class="d-grid gap-2">
-                @if (User.IsInRole("Admin"))
+                @if (User.Identity.Name == Model.Organizer.UserName)
                 {
                     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-warning px-5 col">
                         <i class="bi bi-pencil-square me-1"></i>Edit Event
@@ -99,7 +105,7 @@
         <div class="card-body px-4 py-4">
             @if (Model.Participants != null && Model.Participants.Any())
             {
-                @if (User.IsInRole("Admin"))
+                @if (User.Identity.Name == Model.Organizer.UserName)
                 {
                     
                     <h4 class="mb-3">Manage Participants</h4>

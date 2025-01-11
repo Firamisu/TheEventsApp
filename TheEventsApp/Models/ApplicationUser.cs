@@ -7,7 +7,9 @@ namespace TheEventsApp.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public ICollection<Event> Events { get; set; }
+    
+        public ICollection<Event> OrganizedEvents { get; set; }
+        public ICollection<Event> ParticipatedEvents { get; set; }
     }
 
 }

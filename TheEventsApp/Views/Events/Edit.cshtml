@@ -18,6 +18,12 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label class="control-label">Organizer</label>
+                <input value="@Model.Organizer.FirstName @Model.Organizer.LastName" class="form-control" disabled />
+            </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />

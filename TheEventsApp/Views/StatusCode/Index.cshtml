@@ -1,0 +1,45 @@
+﻿@model int
+
+@{
+    ViewData["Title"] = "Error";
+    var statusCode = Model;
+    var statusMessage = Enum.IsDefined(typeof(System.Net.HttpStatusCode), statusCode)
+        ? ((System.Net.HttpStatusCode)statusCode).ToString().Replace('_', ' ')
+        : "Unknown Error";
+}
+
+<div class="error-page d-flex flex-column align-items-center justify-content-center">
+    @if (statusCode != 0) {
+        <h1 class="display-1 fw-bold text-danger">@statusCode</h1>
+    }
+    <p class="fs-4 text-dark">@statusMessage</p>
+
+    <div class="mt-4">
+        <a href="/" class="btn btn-primary btn-lg me-3">Go to Home Page</a>
+        <button class="btn btn-secondary btn-lg" onclick="window.history.back();">Go Back</button>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        height: 100vh;
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+        .error-page h1 {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+        }
+
+        .error-page p {
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+
+    .btn {
+        font-size: 1.25rem;
+        padding: 10px 20px;
+    }
+</style>
